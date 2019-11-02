@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "homepage": "https://hesher.github.io/my-app",
+  "name": "math",
+  "homepage": "https://hesher.github.io/math",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
