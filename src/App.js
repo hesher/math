@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import logo from './logo.svg';
+import './App.css';
 
 // function App() {
 //   const {
@@ -44,38 +44,91 @@ import "./App.css";
 // }
 
 const RESULT = {
-  FAILED: "FAILED",
-  SUCCESS: "SUCCESS"
+  FAILED: 'FAILED',
+  SUCCESS: 'SUCCESS'
 };
 
+const options = [1, 3, 5, 7, 11, 13, 16];
 const App = () => {
-  return <Game onFinish={x => console.log(x)} />;
-};
-const Game = ({ onFinish, initialOptions = [1, 3, 5, 7, 11, 13, 16] }) => {
-  const [currentSum, setCurrentSum] = useState([]);
-  const [options, setOptions] = useState(initialOptions);
+  const [score, setScore] = useState(0);
+  const [prize, setPrize] = useState(5);
+  const [nToUse, setNToUse] = useState(
+    Math.ceil(Math.random() * options.length)
+  );
+  const [state, setState] = useState();
+
   return (
-    <header className="container">
-      {options.map(num => (
-        <button
-          className="num"
-          onClick={() => {
-            const newSum = currentSum - num;
-            if (!hasSolution(options, newSum)) {
-              onFinish(RESULT.FAILED);
-            } else if (newSum === 0) {
-              onFinish(RESULT.SUCCESS);
-            }
-            setCurrentSum(newSum);
-            setOptions(options.filter(option => option !== num));
+    <>
+      <div>score = {score}</div>
+      <div>n = {nToUse} </div>
+      {state === RESULT.FAILED ? (
+        <span>FAILED</span>
+      ) : state === RESULT.SUCCESS ? (
+        <span>SUCCESS</span>
+      ) : (
+        <Game
+          nToUse={nToUse}
+          initialOptions={options}
+          onFinish={result => {
+            setState(result);
+            setTimeout(() => setState(), 1000);
+            console.log(result);
+            setScore(result === RESULT.SUCCESS ? score + prize : score - prize);
+            setNToUse(Math.ceil(Math.random() * options.length));
           }}
-        >
-          {num}
-        </button>
-      ))}
-    </header>
+        />
+      )}
+    </>
   );
 };
+const Game = ({ onFinish, initialOptions, nToUse }) => {
+  const [options, setOptions] = useState(initialOptions);
+  const [currentSum, setCurrentSum] = useState(nSum(initialOptions, nToUse));
+  return (
+    <>
+      sum = {currentSum}
+      <header className="container">
+        {options.map(num => (
+          <button
+            className="num"
+            onClick={() => {
+              const newSum = currentSum - num;
+              if (!hasSolution(options, newSum)) {
+                console.log(`hasSolution([${options}], ${newSum})`);
+                onFinish(RESULT.FAILED);
+                setOptions(initialOptions);
+                setCurrentSum(nSum(initialOptions, nToUse));
+              } else if (newSum === 0) {
+                onFinish(RESULT.SUCCESS);
+                setOptions(initialOptions);
+                setCurrentSum(nSum(initialOptions, nToUse));
+              } else {
+                setCurrentSum(newSum);
+                setOptions(options.filter(option => option !== num));
+              }
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </header>
+    </>
+  );
+};
+
+const nSum = (arr, n) => randomlySelectN(arr, n).reduce((x, y) => x + y, 0);
+
+function randomlySelectN(array, n) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = temp;
+  }
+
+  return shuffled.slice(0, n);
+}
 
 const hasSolution = (options, sum) => {
   if (sum === 0) return true;
@@ -83,7 +136,8 @@ const hasSolution = (options, sum) => {
   if (sum < 0) return false;
 
   return (
-    hasSolution(options.slice(1), sum - options[0]) || hasSolution(options.slice(1), sum)
+    hasSolution(options.slice(1), sum - options[0]) ||
+    hasSolution(options.slice(1), sum)
   );
 };
 
