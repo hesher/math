@@ -41,10 +41,7 @@ const App = () => {
   const [username, setUsername] = useState();
 
   useEffect(() => {
-    // var test = firebase.database().ref('/users/zohar');
-    // test.once('value').then(x => console.log('value=', x.val()[0]));
     zohar.on('value', function(snapshot) {
-      // console.log('ZOHAR:', snapshot.val().users[0]);
       const user = snapshot.val();
       setUsername(user.name);
       setScore(user.score);
@@ -60,11 +57,13 @@ const App = () => {
   }, [username, score, level]);
 
   return username ? (
-    <>
-      <div>score = {score}</div>
-      <div>prize = {prize}</div>
-      <div>name = {username}</div>
-      <div>n = {nToUse} </div>
+    <span className="app-container">
+      <span className="stats-container">
+        <div className="stat">score = {score}</div>
+        <div className="stat">prize = {prize}</div>
+        <div className="stat">name = {username}</div>
+        <div className="stat">n = {nToUse} </div>
+      </span>
       {state === RESULT.FAILED ? (
         <Failure />
       ) : state === RESULT.SUCCESS ? (
@@ -87,35 +86,39 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </span>
   ) : (
     <span>Loading...</span>
   );
 };
 const Game = ({onFinish, initialOptions, nToUse}) => {
-  const [options, setOptions] = useState(initialOptions);
   const [currentSum, setCurrentSum] = useState(nSum(initialOptions, nToUse));
+  const [chosen, setChosen] = useState({});
   return (
     <>
       sum = {currentSum}
-      <header className="container">
-        {options.map(num => (
+      <header className="game-container">
+        {initialOptions.map(num => (
           <button
-            className="num"
+            className={`num ${chosen[num] ? 'disabled' : ''}`}
+            disabled={chosen[num]}
             onClick={() => {
               const newSum = currentSum - num;
-              if (!hasSolution(options, newSum)) {
+              setChosen({...chosen, [num]: true});
+              if (
+                !hasSolution(
+                  options.filter(num => !chosen[num]),
+                  newSum
+                )
+              ) {
                 console.log(`hasSolution([${options}], ${newSum})`);
                 onFinish(RESULT.FAILED);
-                setOptions(initialOptions);
                 setCurrentSum(nSum(initialOptions, nToUse));
               } else if (newSum === 0) {
                 onFinish(RESULT.SUCCESS);
-                setOptions(initialOptions);
                 setCurrentSum(nSum(initialOptions, nToUse));
               } else {
                 setCurrentSum(newSum);
-                setOptions(options.filter(option => option !== num));
               }
             }}>
             {num}
@@ -151,7 +154,15 @@ const hasSolution = (options, sum) => {
   );
 };
 
-const Success = () => <div style={{fontSize: 36}}> SUCCESS!!! :) :)</div>;
-const Failure = () => <div style={{fontSize: 36}}>Failed!!! :( :( </div>;
+const Success = () => (
+  <div className="game-container" style={{fontSize: 36}}>
+    SUCCESS!!! :) :)
+  </div>
+);
+const Failure = () => (
+  <div className="game-container" style={{fontSize: 36}}>
+    Failed!!! :( :(
+  </div>
+);
 
 export default App;
