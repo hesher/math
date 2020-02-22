@@ -17,7 +17,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .game-container {
@@ -48,6 +48,10 @@ body {
   background-color: gray;
 }
 
+.num.part-of-solution {
+  background-color: rgb(64, 179, 64);
+}
+
 .stats {
   font-size: 24px;
   border: 1px solid black;
@@ -60,9 +64,8 @@ body {
 }
 
 .stats-container {
-  background-color: rgb(100, 182, 178);
+  /* background-color: rgb(100, 182, 178); */
   width: 500px;
-  height: 500px;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -71,10 +74,14 @@ body {
 
 .stat {
   display: block;
+  border-radius: 15px;
   border: 1px solid gray;
-  background-color: rgb(150, 2 32, 178);
-  height: 128px;
-  width: 128px;
+  color: white;
+  background-color: rgba(95, 14, 14, 0.877);
+  padding: 20px;
+  font-size: 22px;
+  /* height: 128px; */
+  width: 64px;
   display: flex;
   align-items: center;
   justify-content: center;

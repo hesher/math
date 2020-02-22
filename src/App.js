@@ -39,6 +39,7 @@ const App = () => {
   const [nToUse, setNToUse] = useState();
   const [state, setState] = useState();
   const [username, setUsername] = useState();
+  const [gameId, setGameId] = useState(1);
 
   useEffect(() => {
     zohar.on('value', function(snapshot) {
@@ -59,10 +60,9 @@ const App = () => {
   return username ? (
     <span className="app-container">
       <span className="stats-container">
-        <div className="stat">score = {score}</div>
-        <div className="stat">prize = {prize}</div>
-        <div className="stat">name = {username}</div>
-        <div className="stat">n = {nToUse} </div>
+        <div className="stat">{score}</div>
+        <div className="stat">${prize}</div>
+        <div className="stat">{username}</div>
       </span>
       {state === RESULT.FAILED ? (
         <Failure />
@@ -72,9 +72,13 @@ const App = () => {
         <Game
           nToUse={nToUse}
           initialOptions={options}
+          gameId={gameId}
           onFinish={result => {
             setState(result);
-            setTimeout(() => setState(), 1000);
+            setTimeout(() => {
+              setState();
+              setGameId(gameId + 1);
+            }, 2000);
             const newScore =
               result === RESULT.SUCCESS ? score + prize : score - prize;
             firebase
@@ -88,19 +92,29 @@ const App = () => {
       )}
     </span>
   ) : (
-    <span>Loading...</span>
+    <span>Loadings...</span>
   );
 };
-const Game = ({onFinish, initialOptions, nToUse}) => {
-  const [currentSum, setCurrentSum] = useState(nSum(initialOptions, nToUse));
+const Game = ({onFinish, initialOptions, nToUse, gameId}) => {
+  const [solution, setSolution] = useState();
+  const [currentSum, setCurrentSum] = useState();
   const [chosen, setChosen] = useState({});
+  const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    const sol = makeSolution(initialOptions, nToUse);
+    setSolution(sol);
+    setCurrentSum(sol.reduce((x, y) => x + y, 0));
+  }, [gameId, initialOptions, nToUse]);
   return (
-    <>
-      sum = {currentSum}
+    <span>
+      Sum = {currentSum}
       <header className="game-container">
         {initialOptions.map(num => (
           <button
-            className={`num ${chosen[num] ? 'disabled' : ''}`}
+            className={`num ${chosen[num] ? 'disabled' : ''} ${
+              showSolution && solution.includes(num) ? 'part-of-solution' : ''
+            }`}
             disabled={chosen[num]}
             onClick={() => {
               const newSum = currentSum - num;
@@ -112,11 +126,10 @@ const Game = ({onFinish, initialOptions, nToUse}) => {
                 )
               ) {
                 console.log(`hasSolution([${options}], ${newSum})`);
-                onFinish(RESULT.FAILED);
-                setCurrentSum(nSum(initialOptions, nToUse));
+                setTimeout(() => onFinish(RESULT.FAILED), 2000);
+                setShowSolution(true);
               } else if (newSum === 0) {
                 onFinish(RESULT.SUCCESS);
-                setCurrentSum(nSum(initialOptions, nToUse));
               } else {
                 setCurrentSum(newSum);
               }
@@ -125,11 +138,11 @@ const Game = ({onFinish, initialOptions, nToUse}) => {
           </button>
         ))}
       </header>
-    </>
+    </span>
   );
 };
 
-const nSum = (arr, n) => randomlySelectN(arr, n).reduce((x, y) => x + y, 0);
+const makeSolution = (arr, n) => randomlySelectN(arr, n);
 
 function randomlySelectN(array, n) {
   const shuffled = [...array];
