@@ -22,7 +22,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-var zohar = firebase.database().ref('/');
+var zohar = firebase.database().ref('/users/zohar');
 
 // https://console.firebase.google.com/u/0/project/math-a7cdc/database/math-a7cdc/data
 
@@ -41,9 +41,11 @@ const App = () => {
   const [username, setUsername] = useState();
 
   useEffect(() => {
+    // var test = firebase.database().ref('/users/zohar');
+    // test.once('value').then(x => console.log('value=', x.val()[0]));
     zohar.on('value', function(snapshot) {
-      console.log('ZOHAR:', snapshot.val().users[0]);
-      const user = snapshot.val().users[0];
+      // console.log('ZOHAR:', snapshot.val().users[0]);
+      const user = snapshot.val();
       setUsername(user.name);
       setScore(user.score);
       setLevel(user.level);
@@ -74,7 +76,14 @@ const App = () => {
           onFinish={result => {
             setState(result);
             setTimeout(() => setState(), 1000);
-            setScore(result === RESULT.SUCCESS ? score + prize : score - prize);
+            const newScore =
+              result === RESULT.SUCCESS ? score + prize : score - prize;
+            firebase
+              .database()
+              .ref('users/zohar')
+              .update({
+                score: newScore
+              });
           }}
         />
       )}
