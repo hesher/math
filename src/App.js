@@ -22,7 +22,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-var zohar = firebase.database().ref('/users/zohar');
+var dbRef = firebase.database().ref('/users/jonathan');
 
 // https://console.firebase.google.com/u/0/project/math-a7cdc/database/math-a7cdc/data
 
@@ -39,23 +39,27 @@ const App = () => {
   const [nToUse, setNToUse] = useState();
   const [state, setState] = useState();
   const [username, setUsername] = useState();
+  const [simpleMode, setSimpleMode] = useState(false);
   const [gameId, setGameId] = useState(1);
 
   useEffect(() => {
-    zohar.on('value', function(snapshot) {
+    dbRef.on('value', function(snapshot) {
       const user = snapshot.val();
       setUsername(user.name);
       setScore(user.score);
       setLevel(user.level);
+      setSimpleMode(user.simpleMode);
     });
 
     const minN = level + 1;
     const maxN = Math.min(options.length, (level + 1) * 2);
-    const nToUseVal = Math.ceil(Math.random() * (maxN - minN)) + minN;
+    const nToUseVal = simpleMode
+      ? 1
+      : Math.ceil(Math.random() * (maxN - minN)) + minN;
     const prize = Math.ceil(Math.random() * options.length * level);
     setNToUse(nToUseVal);
     setPrize(prize);
-  }, [username, score, level]);
+  }, [username, score, level, simpleMode]);
 
   return username ? (
     <span className="app-container">
@@ -81,12 +85,9 @@ const App = () => {
             }, 2000);
             const newScore =
               result === RESULT.SUCCESS ? score + prize : score - prize;
-            firebase
-              .database()
-              .ref('users/zohar')
-              .update({
-                score: newScore
-              });
+            dbRef.update({
+              score: newScore
+            });
           }}
         />
       )}
@@ -121,11 +122,10 @@ const Game = ({onFinish, initialOptions, nToUse, gameId}) => {
               setChosen({...chosen, [num]: true});
               if (
                 !hasSolution(
-                  options.filter(num => !chosen[num]),
+                  options.filter(curr => !chosen[curr] && curr !== num),
                   newSum
                 )
               ) {
-                console.log(`hasSolution([${options}], ${newSum})`);
                 setTimeout(() => onFinish(RESULT.FAILED), 2000);
                 setShowSolution(true);
               } else if (newSum === 0) {
