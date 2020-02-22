@@ -2,6 +2,30 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+// Firebase App (the core Firebase SDK) is always required and
+// must be listed before other Firebase SDKs
+import * as firebase from 'firebase/app';
+import 'firebase/database';
+
+// TODO: Replace the following with your app's Firebase project configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyC8ZXJBanm83WVhdbYnrSR_gV7QDNR7NzY',
+  authDomain: 'math-a7cdc.firebaseapp.com',
+  databaseURL: 'https://math-a7cdc.firebaseio.com',
+  projectId: 'math-a7cdc',
+  storageBucket: 'math-a7cdc.appspot.com',
+  messagingSenderId: '438256651307',
+  appId: '1:438256651307:web:2bde54ba227715a1d7ee6e',
+  measurementId: 'G-HG898MJZF7'
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+var zohar = firebase.database().ref('/');
+
+// https://console.firebase.google.com/u/0/project/math-a7cdc/database/math-a7cdc/data
+
 // function App() {
 //   const {
 //     reset,
@@ -56,10 +80,21 @@ const App = () => {
     Math.ceil(Math.random() * options.length)
   );
   const [state, setState] = useState();
+  const [user, setUser] = useState();
 
-  return (
+  useEffect(() => {
+    zohar.on('value', function(snapshot) {
+      console.log('ZOHAR:', snapshot.val().users[0]);
+      const user = snapshot.val().users[0];
+      setUser(user);
+      setScore(user.score);
+    });
+  }, []);
+
+  return user ? (
     <>
       <div>score = {score}</div>
+      <div>name = {user.name}</div>
       <div>n = {nToUse} </div>
       {state === RESULT.FAILED ? (
         <span>FAILED</span>
@@ -79,6 +114,8 @@ const App = () => {
         />
       )}
     </>
+  ) : (
+    <span>Loading...</span>
   );
 };
 const Game = ({ onFinish, initialOptions, nToUse }) => {
