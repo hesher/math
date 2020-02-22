@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import RESULT from './RESULT';
+import selectRandomN from './selectRandomN';
 
 export default function AddToSum({onFinish, initialOptions, nToUse, gameId}) {
   const [solution, setSolution] = useState();
@@ -47,19 +48,7 @@ export default function AddToSum({onFinish, initialOptions, nToUse, gameId}) {
   );
 }
 
-const makeSolution = (arr, n) => randomlySelectN(arr, n);
-
-function randomlySelectN(array, n) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i);
-    const temp = shuffled[i];
-    shuffled[i] = shuffled[j];
-    shuffled[j] = temp;
-  }
-
-  return shuffled.slice(0, n);
-}
+const makeSolution = (arr, n) => selectRandomN(arr, n);
 
 const hasSolution = (options, sum) => {
   if (sum === 0) return true;

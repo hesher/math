@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import AddToSum from './AddToSum';
 import './App.css';
 import RESULT from './RESULT';
+import selectRandomN from './selectRandomN';
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -27,7 +28,8 @@ var dbRef = firebase.database().ref('/users/zohar');
 
 // https://console.firebase.google.com/u/0/project/math-a7cdc/database/math-a7cdc/data
 
-const options = [1, 3, 5, 7, 11, 13, 16, 19, 23];
+const optionalOptions = [2, 3, 5, 7, 9, 11, 13, 17, 19, 23, 25, 31, 37];
+const options = selectRandomN(optionalOptions, 9).sort((a, b) => a - b);
 const App = () => {
   const [level, setLevel] = useState();
   const [score, setScore] = useState();
