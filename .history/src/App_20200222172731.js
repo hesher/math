@@ -55,7 +55,7 @@ const App = () => {
     const prize = Math.ceil(Math.random() * options.length * level);
     setNToUse(nToUseVal);
     setPrize(prize);
-  }, [username, score, level]);
+  }, [level]);
 
   return username ? (
     <>

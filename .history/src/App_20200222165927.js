@@ -33,35 +33,34 @@ const RESULT = {
 
 const options = [1, 3, 5, 7, 11, 13, 16];
 const App = () => {
-  const [level, setLevel] = useState();
+  const [level, setLevel] = useState(1);
   const [score, setScore] = useState();
   const [prize, setPrize] = useState();
   const [nToUse, setNToUse] = useState();
   const [state, setState] = useState();
-  const [username, setUsername] = useState();
+  const [user, setUser] = useState();
 
   useEffect(() => {
     zohar.on('value', function(snapshot) {
       console.log('ZOHAR:', snapshot.val().users[0]);
       const user = snapshot.val().users[0];
-      setUsername(user.name);
+      setUser(user);
       setScore(user.score);
-      setLevel(user.level);
     });
 
-    const minN = level + 1;
-    const maxN = Math.min(options.length, (level + 1) * 2);
-    const nToUseVal = Math.ceil(Math.random() * (maxN - minN)) + minN;
-    const prize = Math.ceil(Math.random() * options.length * level);
+    const nToUseVal = Math.min(
+      Math.ceil(Math.random() * options.length),
+      level
+    );
+    const score = Math.ceil(Math.random() * options.length * level);
     setNToUse(nToUseVal);
-    setPrize(prize);
-  }, [username, score, level]);
+    setScore(score);
+  }, []);
 
-  return username ? (
+  return user ? (
     <>
       <div>score = {score}</div>
-      <div>prize = {prize}</div>
-      <div>name = {username}</div>
+      <div>name = {user.name}</div>
       <div>n = {nToUse} </div>
       {state === RESULT.FAILED ? (
         <Failure />
@@ -74,7 +73,9 @@ const App = () => {
           onFinish={result => {
             setState(result);
             setTimeout(() => setState(), 1000);
+            console.log(result);
             setScore(result === RESULT.SUCCESS ? score + prize : score - prize);
+            setNToUse(Math.ceil(Math.random() * options.length));
           }}
         />
       )}
