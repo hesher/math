@@ -25,8 +25,6 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-var dbRef = firebase.database().ref('/users/zohar');
-
 // https://console.firebase.google.com/u/0/project/math-a7cdc/database/math-a7cdc/data
 
 const optionalOptions = [2, 3, 5, 7, 9, 11, 13, 17, 19, 23, 25, 31, 37];
@@ -38,41 +36,51 @@ const App = () => {
   const [nToUse, setNToUse] = useState();
   const [state, setState] = useState();
   const [username, setUsername] = useState();
+  const [realUsername, setRealUsername] = useState();
   const [simpleMode, setSimpleMode] = useState(false);
   const [gameId, setGameId] = useState(1);
   const [userLogged, setUserLogged] = useState(false);
 
   useEffect(() => {
-    dbRef.on('value', function(snapshot) {
-      const user = snapshot.val();
-      setUsername(user.name);
-      setScore(user.score);
-      setLevel(user.level);
-      setSimpleMode(user.simpleMode);
-    });
-
-    const minN = level + 1;
-    const maxN = Math.min(options.length, (level + 1) * 2);
-    const nToUseVal = simpleMode
-      ? 1
-      : Math.ceil(Math.random() * (maxN - minN)) + minN;
-    const prize = Math.ceil(Math.random() * options.length * level);
-    setNToUse(nToUseVal);
-    setPrize(prize);
-  }, [username, score, level, simpleMode]);
+    if (userLogged) {
+      const dbRef = firebase.database().ref(`/users/${username}`);
+      dbRef.on('value', function(snapshot) {
+        const user = snapshot.val();
+        setRealUsername(user.name);
+        setScore(user.score);
+        setLevel(user.level);
+        setSimpleMode(user.simpleMode);
+      });
+      const minN = level + 1;
+      const maxN = Math.min(options.length, (level + 1) * 2);
+      const nToUseVal = simpleMode
+        ? 1
+        : Math.ceil(Math.random() * (maxN - minN)) + minN;
+      const prize = Math.ceil(Math.random() * options.length * level);
+      setNToUse(nToUseVal);
+      setPrize(prize);
+    }
+  }, [username, score, level, simpleMode, userLogged]);
 
   return !userLogged ? (
     <PlayerChoose
-      onSubmit={(user, pass) => {
-        // xxxx
+      onSubmit={async (pUsername, pass) => {
+        const dbRef = firebase.database().ref(`/users/${pUsername}`);
+        const snapshot = await dbRef.once('value');
+        const user = snapshot.val();
+        if (user.password === pass) {
+          setUsername(pUsername);
+          setRealUsername(user.name);
+          setUserLogged(true);
+        }
       }}
     />
-  ) : username ? (
+  ) : (
     <span className="app-container">
       <span className="stats-container">
         <div className="stat">${score}</div>
         <div className="stat">${prize}</div>
-        <div className="stat">{username}</div>
+        <div className="stat">{realUsername}</div>
       </span>
       {state === RESULT.FAILED ? (
         <Failure />
@@ -91,6 +99,7 @@ const App = () => {
             }, 2000);
             const newScore =
               result === RESULT.SUCCESS ? score + prize : score - prize;
+            const dbRef = firebase.database().ref(`/users/${username}`);
             dbRef.update({
               score: newScore
             });
@@ -98,8 +107,6 @@ const App = () => {
         />
       )}
     </span>
-  ) : (
-    <span>Loadings...</span>
   );
 };
 
