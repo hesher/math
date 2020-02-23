@@ -2,6 +2,7 @@
 html,
 body {
   height: 100%;
+  width: 100%;
 }
 .App {
   background-color: white;
@@ -13,8 +14,10 @@ body {
 
 .app-container {
   width: 100%;
-  height: 100%;
-  display: flex;
+  /* height: 100%; */
+  display: grid;
+  grid-template-rows: 50px 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
   justify-content: space-around;
   flex-direction: column;
@@ -22,12 +25,15 @@ body {
 
 .game-container {
   background-color: rgb(100, 182, 178);
-  width: 500px;
-  height: 500px;
-  display: flex;
+  /* max-width: 500px; */
+  /* max-height: 500px; */
+  padding: 20px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  display: grid;
   align-items: center;
   justify-content: space-around;
-  flex-wrap: wrap;
+  justify-items: center;
 }
 .num {
   background-color: gold;
@@ -36,12 +42,12 @@ body {
   color: black;
   display: block;
   font-size: 24px;
-  height: 128px;
+  width: 70%;
   line-height: 64px;
   text-align: center;
   text-decoration: none;
   transition: background-color 0.5s ease;
-  width: 128px;
+  margin: 15px;
 }
 
 .num.disabled {
@@ -65,23 +71,23 @@ body {
 
 .stats-container {
   /* background-color: rgb(100, 182, 178); */
-  width: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  flex-wrap: wrap;
+  /* width: 500px; */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
 }
 
 .stat {
   display: block;
   flex-grow: 1;
-  border-radius: 15px;
+  flex-shrink: 1;
+  /* border-radius: 15px; */
   border: 1px solid gray;
   color: white;
   background-color: rgba(95, 14, 14, 0.877);
-  padding: 20px;
+  padding: 10px;
   font-size: 22px;
-  width: 64px;
+  /* width: 64px; */
   display: flex;
   align-items: center;
   justify-content: center;
