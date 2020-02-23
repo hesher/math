@@ -1,11 +1,29 @@
-// import React, {useState, useEffect} from 'react';
-// import AddToSum from './AddToSum';
-// import './App.css';
-// import RESULT from './RESULT';
-// import selectRandomN from './selectRandomN';
-// import * as firebase from 'firebase/app';
-// import 'firebase/database';
+import React, {useState, useEffect} from 'react';
+import './PlayerChoose.css';
+import 'firebase/database';
 
-// var dbRef = firebase.database().ref('/users/zohar');
-
-// export default function PlayerChoose() {}
+export default function PlayerChoose({onSubmit}) {
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
+  return (
+    <span className="player-chooser-container">
+      <span className="player-chooser-container-field">
+        <label>User</label>
+        <input
+          type="text"
+          value={username}
+          onChange={ev => setUsername(ev.target.value)}
+        />
+      </span>
+      <span className="player-chooser-container-field">
+        <label>Password</label>
+        <input
+          type="text"
+          value={password}
+          onChange={ev => setPassword(ev.target.value)}
+        />
+      </span>
+      <button onClick={() => onSubmit(username, password)}>Submit</button>
+    </span>
+  );
+}

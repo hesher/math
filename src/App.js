@@ -3,6 +3,7 @@ import AddToSum from './AddToSum';
 import './App.css';
 import RESULT from './RESULT';
 import selectRandomN from './selectRandomN';
+import PlayerChoose from './PlayerChoose';
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -39,6 +40,7 @@ const App = () => {
   const [username, setUsername] = useState();
   const [simpleMode, setSimpleMode] = useState(false);
   const [gameId, setGameId] = useState(1);
+  const [userLogged, setUserLogged] = useState(false);
 
   useEffect(() => {
     dbRef.on('value', function(snapshot) {
@@ -59,7 +61,13 @@ const App = () => {
     setPrize(prize);
   }, [username, score, level, simpleMode]);
 
-  return username ? (
+  return !userLogged ? (
+    <PlayerChoose
+      onSubmit={(user, pass) => {
+        // xxxx
+      }}
+    />
+  ) : username ? (
     <span className="app-container">
       <span className="stats-container">
         <div className="stat">${score}</div>
