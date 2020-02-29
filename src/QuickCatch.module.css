@@ -5,7 +5,7 @@
 }
 
 .movingBall0 {
-  animation: slidein 10s infinite linear;
+  /* animation: slidein 10s infinite linear; */
   width: 100px;
   height: 100px;
   border: 1px solid gray;
@@ -17,7 +17,7 @@
 }
 
 .movingBall1 {
-  animation: slidein 15s infinite linear;
+  /* animation: slidein 15s infinite linear; */
   width: 100px;
   height: 100px;
   border: 1px solid gray;
@@ -29,7 +29,7 @@
 }
 
 .movingBall2 {
-  animation: slidein 7s infinite linear;
+  /* animation: slidein 7s infinite linear; */
   width: 100px;
   height: 100px;
   border: 1px solid gray;

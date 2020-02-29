@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "firebase": "^7.9.1",
+    "framer-motion": "^1.8.4",
     "gh-pages": "^2.1.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
