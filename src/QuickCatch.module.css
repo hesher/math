@@ -1,0 +1,68 @@
+.quickCatchContainer {
+  background-color: rgb(8, 221, 221);
+  height: 400px;
+  position: relative;
+}
+
+.movingBall0 {
+  animation: slidein 10s infinite linear;
+  width: 100px;
+  height: 100px;
+  border: 1px solid gray;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  color: white;
+  font-size: 30px;
+}
+
+.movingBall1 {
+  animation: slidein 15s infinite linear;
+  width: 100px;
+  height: 100px;
+  border: 1px solid gray;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  color: white;
+  font-size: 30px;
+}
+
+.movingBall2 {
+  animation: slidein 7s infinite linear;
+  width: 100px;
+  height: 100px;
+  border: 1px solid gray;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  color: white;
+  font-size: 30px;
+}
+
+@keyframes slidein {
+  from {
+    left: calc(50% - 100px);
+    top: 0;
+  }
+
+  25% {
+    left: 0;
+    top: calc(50% - 100px);
+  }
+
+  50% {
+    left: calc(50% - 100px);
+    top: calc(100% - 100px);
+  }
+
+  75% {
+    left: calc(100% - 100px);
+    top: calc(50% - 100px);
+  }
+
+  to {
+    left: calc(50% - 100px);
+    top: 0;
+  }
+}

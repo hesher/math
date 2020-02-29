@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import AddToSum from './AddToSum';
+import QuickCatch from './QuickCatch';
 import './App.css';
 import RESULT from './RESULT';
 import selectRandomN from './selectRandomN';
@@ -61,7 +62,9 @@ const App = () => {
       const nToUseVal = simpleMode
         ? 1
         : Math.ceil(Math.random() * (maxN - minN)) + minN;
-      const prize = simpleMode ? 1 :  Math.ceil(Math.random() * options.length * level);
+      const prize = simpleMode
+        ? 1
+        : Math.ceil(Math.random() * options.length * level);
       setNToUse(nToUseVal);
       setPrize(prize);
     }
@@ -95,36 +98,61 @@ const App = () => {
       ) : state === RESULT.SUCCESS ? (
         <Success />
       ) : (
-        <AddToSum
-          nToUse={nToUse}
-          initialOptions={options}
-          gameId={gameId}
-          onFinish={result => {
-            setState(result);
-            setTimeout(() => {
-              setState();
-              setGameId(gameId + 1);
-            }, 2000);
-            const newScore =
-              result === RESULT.SUCCESS ? score + prize : score - prize;
-            const dbRef = firebase.database().ref(`/users/${username}`);
-            dbRef.update({
-              score: newScore
-            });
-          }}
-        />
+        <RandomGameChooser>
+          <QuickCatch
+            gameId={gameId}
+            onFinish={result => {
+              setState(result);
+              setTimeout(() => {
+                setState();
+                setGameId(gameId + 1);
+              }, 2000);
+              const newScore =
+                result === RESULT.SUCCESS ? score + prize : score - prize;
+              const dbRef = firebase.database().ref(`/users/${username}`);
+              dbRef.update({
+                score: newScore
+              });
+            }}
+          />
+          <AddToSum
+            nToUse={nToUse}
+            initialOptions={options}
+            gameId={gameId}
+            onFinish={result => {
+              setState(result);
+              setTimeout(() => {
+                setState();
+                setGameId(gameId + 1);
+              }, 2000);
+              const newScore =
+                result === RESULT.SUCCESS ? score + prize : score - prize;
+              console.log({ newScore });
+              const dbRef = firebase.database().ref(`/users/${username}`);
+              dbRef.update({
+                score: newScore
+              });
+            }}
+          />
+        </RandomGameChooser>
       )}
     </span>
   );
 };
 
+const RandomGameChooser = ({ children }) => {
+  const childs = React.Children.toArray(children);
+  return childs[Math.floor(Math.random() * childs.length)];
+  // return childs[0];
+};
+
 const Success = () => (
-  <div className="game-container" style={{fontSize: 36}}>
+  <div className="game-container" style={{ fontSize: 36 }}>
     SUCCESS!!! :) :)
   </div>
 );
 const Failure = () => (
-  <div className="game-container" style={{fontSize: 36}}>
+  <div className="game-container" style={{ fontSize: 36 }}>
     Failed!!! :( :(
   </div>
 );
