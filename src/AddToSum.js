@@ -25,13 +25,27 @@ export default function AddToSum({onFinish, initialOptions, nToUse, gameId}) {
             disabled={chosen[num]}
             onClick={() => {
               const newSum = currentSum - num;
-              setChosen({...chosen, [num]: true});
-              if (
-                !hasSolution(
-                  initialOptions.filter(curr => !chosen[curr] && curr !== num),
-                  newSum
-                )
-              ) {
+              const newChosen = {...chosen, [num]: true};
+              setChosen(newChosen);
+              const forwardSolution = findSolution(
+                initialOptions.filter(curr => !newChosen[curr] && curr !== num),
+                newSum
+              );
+              console.log(
+                Object.entries(newChosen)
+                  .filter(([_, isChosen]) => isChosen)
+                  .map(([number]) => Number(number))
+              );
+              if (forwardSolution !== null) {
+                setSolution([
+                  ...Object.entries(newChosen)
+                    .filter(([_, isChosen]) => isChosen)
+                    .map(([number]) => Number(number)),
+                  ...forwardSolution
+                ]);
+              }
+
+              if (forwardSolution === null) {
                 setTimeout(() => onFinish(RESULT.FAILED), 2000);
                 setShowSolution(true);
               } else if (newSum === 0) {
@@ -50,13 +64,18 @@ export default function AddToSum({onFinish, initialOptions, nToUse, gameId}) {
 
 const makeSolution = (arr, n) => selectRandomN(arr, n);
 
-const hasSolution = (options, sum) => {
-  if (sum === 0) return true;
-  if (sum > 0 && options.length === 0) return false;
-  if (sum < 0) return false;
+const findSolution = (options, sum) => {
+  if (sum === 0 && options.length === 0) return [];
+  if (sum >= 0 && options.length === 0) return null;
+  if (sum < 0) return null;
 
-  return (
-    hasSolution(options.slice(1), sum - options[0]) ||
-    hasSolution(options.slice(1), sum)
-  );
+  const left = findSolution(options.slice(1), sum - options[0]);
+  if (left !== null) {
+    return [options[0], ...left];
+  }
+  const right = findSolution(options.slice(1), sum);
+  if (right !== null) {
+    return right;
+  }
+  return null;
 };
