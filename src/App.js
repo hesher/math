@@ -4,6 +4,7 @@ import './App.css';
 import RESULT from './RESULT';
 import selectRandomN from './selectRandomN';
 import PlayerChoose from './PlayerChoose';
+import LeaderBoard from './LeaderBoard';
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -40,7 +41,11 @@ const App = () => {
   const [simpleMode, setSimpleMode] = useState(false);
   const [gameId, setGameId] = useState(1);
   const [userLogged, setUserLogged] = useState(false);
+  const [showLeaderBoard, setShowLeaderBoard] = useState(true);
 
+  useEffect(() => {
+    setTimeout(() => setShowLeaderBoard(false), 5000);
+  });
   useEffect(() => {
     if (userLogged) {
       const dbRef = firebase.database().ref(`/users/${username}`);
@@ -62,7 +67,9 @@ const App = () => {
     }
   }, [username, score, level, simpleMode, userLogged]);
 
-  return !userLogged ? (
+  return showLeaderBoard ? (
+    <LeaderBoard />
+  ) : !userLogged ? (
     <PlayerChoose
       onSubmit={async (pUsername, pass) => {
         const dbRef = firebase.database().ref(`/users/${pUsername}`);

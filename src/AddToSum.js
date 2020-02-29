@@ -31,11 +31,7 @@ export default function AddToSum({onFinish, initialOptions, nToUse, gameId}) {
                 initialOptions.filter(curr => !newChosen[curr] && curr !== num),
                 newSum
               );
-              console.log(
-                Object.entries(newChosen)
-                  .filter(([_, isChosen]) => isChosen)
-                  .map(([number]) => Number(number))
-              );
+
               if (forwardSolution !== null) {
                 setSolution([
                   ...Object.entries(newChosen)

@@ -1,0 +1,39 @@
+.leaderBoardContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.list {
+  border: 1px solid blue;
+  border-radius: 5px;
+  padding: 10px;
+  list-style: none;
+  min-width: 200px;
+}
+
+.listItem {
+  display: flex;
+  flex-direction: row;
+}
+
+.listItemComponent {
+  /* border-right: 1px dashed greenyellow; */
+}
+
+.index {
+  width: 50px;
+  display: flex;
+  text-align: right;
+}
+
+.name {
+  width: 100px;
+}
+
+.score {
+  width: 100px;
+  text-align: right;
+}
