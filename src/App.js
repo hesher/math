@@ -61,7 +61,7 @@ const App = () => {
       const nToUseVal = simpleMode
         ? 1
         : Math.ceil(Math.random() * (maxN - minN)) + minN;
-      const prize = Math.ceil(Math.random() * options.length * level);
+      const prize = simpleMode ? 1 :  Math.ceil(Math.random() * options.length * level);
       setNToUse(nToUseVal);
       setPrize(prize);
     }
@@ -84,6 +84,7 @@ const App = () => {
     />
   ) : (
     <span className="app-container">
+      <LeaderBoard />
       <span className="stats-container">
         <div className="stat">${score}</div>
         <div className="stat">${prize}</div>
